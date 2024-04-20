@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/down_b"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="0dp"
+        android:backgroundTint="#2196F3"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:padding="0dp"
+        android:rotation="-90"
+        app:cornerRadius="0dp"
+        app:icon="?attr/homeAsUpIndicator"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="40dp"
+        app:iconTint="#80000000"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/left_b"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="0dp"
+        android:backgroundTint="#2196F3"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:padding="0dp"
+        app:cornerRadius="0dp"
+        app:icon="?attr/homeAsUpIndicator"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="40dp"
+        app:iconTint="#80000000"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/down_b"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/right_b"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="0dp"
+        android:backgroundTint="#2196F3"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:padding="0dp"
+        android:rotation="180"
+        app:cornerRadius="0dp"
+        app:icon="?attr/homeAsUpIndicator"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="40dp"
+        app:iconTint="#80000000"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/down_b"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/up_b"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="0dp"
+        android:backgroundTint="#2196F3"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:padding="0dp"
+        android:rotation="90"
+        android:rotationY="0"
+        app:cornerRadius="0dp"
+        app:icon="?attr/actionModeCloseDrawable"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="40dp"
+        app:iconTint="#80000000"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@+id/down_b"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/roll_left_b"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="0dp"
+        android:backgroundTint="#2196F3"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:padding="0dp"
+        android:rotationX="0"
+        android:rotationY="180"
+        app:cornerRadius="0dp"
+        app:icon="@android:drawable/ic_menu_rotate"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="30dp"
+        app:iconTint="@color/black"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@+id/left_b"
+        app:layout_constraintEnd_toStartOf="@+id/up_b" />
+
+    <Button
+        android:id="@+id/roll_right_b"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="0dp"
+        android:backgroundTint="#2196F3"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:padding="0dp"
+        app:cornerRadius="0dp"
+        app:icon="@android:drawable/ic_menu_rotate"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="30dp"
+        app:iconTint="@color/black"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@+id/right_b"
+        app:layout_constraintStart_toEndOf="@+id/up_b" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
