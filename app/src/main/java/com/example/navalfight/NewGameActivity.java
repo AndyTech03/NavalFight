@@ -14,7 +14,12 @@ public class NewGameActivity extends AppCompatActivity {
 
     public final static String DIFFICULTY_KEY = "DIFFICULTY";
 
-    private final static String[] difficultyArray = {"Простой", "Лёгкий", "Сложный", "Мастер", "Нечестный"};
+    private final static String[] difficultyArray = {
+            AIDifficulty.Ease.getTitle(),
+            AIDifficulty.Normal.getTitle(),
+            AIDifficulty.Master.getTitle(),
+            AIDifficulty.Cheating.getTitle()
+    };
     private String difficulty;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +44,7 @@ public class NewGameActivity extends AppCompatActivity {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view,
                                                int position, long id) {
-                        // Получаем выбранный объект
-                        difficulty = (String) parent.getItemAtPosition(position);
+                        difficulty = parent.getItemAtPosition(position).toString();
                     }
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {}
