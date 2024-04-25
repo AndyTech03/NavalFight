@@ -8,4 +8,9 @@
     <string name="difficulty_label">Difficulty</string>
     <string name="start_label">Begin!</string>
     <string name="hardAI">Hard</string>
+    <string name="select_ship">Ship</string>
+    <string name="boat_label">Boat</string>
+    <string name="frigate_label">Frigate</string>
+    <string name="cruiser_label">Cruiser</string>
+    <string name="battleship_label">Battleship</string>
 </resources>

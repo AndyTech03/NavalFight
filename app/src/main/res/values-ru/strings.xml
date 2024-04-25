@@ -9,4 +9,9 @@
     <string name="cheatingAI">Нечестно</string>
     <string name="difficulty_label">Сложность</string>
     <string name="start_label">В бой!</string>
+    <string name="select_ship">Корабль</string>
+    <string name="boat_label">Катер</string>
+    <string name="frigate_label">Фрегат</string>
+    <string name="cruiser_label">Крейсер</string>
+    <string name="battleship_label">Линкор</string>
 </resources>
