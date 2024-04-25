@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">МорскойБой</string>
+    <string name="new_game">Новая игра</string>
+    <string name="title">МОРСКОЙ БОЙ</string>
+    <string name="easeAI">Легко</string>
+    <string name="normalAI">Нормально</string>
+    <string name="hardAI">Сложно</string>
+    <string name="cheatingAI">Нечестно</string>
+    <string name="difficulty_label">Сложность</string>
+    <string name="start_label">В бой!</string>
+</resources>

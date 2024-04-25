@@ -1,42 +1,42 @@
 package com.example.navalfight;
 
-
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 public enum AIDifficulty {
-    Ease("Лёгкий"),
-    Normal("Нормальный"),
-    Master("Стратег"),
-    Cheating("Нечестный");
 
-    public String getTitle() {
-        return title;
+    Ease(R.string.easeAI),
+    Normal(R.string.normalAI),
+    Master(R.string.hardAI),
+    Cheating(R.string.cheatingAI);
+
+
+    private final @StringRes int id;
+
+    AIDifficulty(@StringRes int id) {
+        this.id = id;
     }
 
-    private final String title;
-
-    AIDifficulty(String title) {
-        this.title = title;
+    public @StringRes int getID() {
+        return id;
     }
 
-    public static AIDifficulty fromTitle(String title){
-        switch (title){
-            case "Лёгкий":
-                return Ease;
-            case "Нормальный":
-                return Normal;
-            case "Стратег":
-                return Master;
-            case "Нечестный":
-                return Cheating;
-            default:
-                throw new IllegalArgumentException("Неизвестный тип ИИ: " + title);
-        }
+    public static AIDifficulty fromID(@StringRes int id) {
+        if (id == R.string.easeAI)
+            return Ease;
+        if (id == R.string.normalAI)
+            return Normal;
+        if (id == R.string.hardAI)
+            return Master;
+        if (id == R.string.cheatingAI)
+            return Cheating;
+        throw new IllegalArgumentException("Неизвестный тип ИИ: " + id);
+
     }
 
     @NonNull
     @Override
     public String toString() {
-        return "AI{" + title +  '}';
+        return "AI{" + id + '}';
     }
 }

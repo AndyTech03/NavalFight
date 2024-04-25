@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">NavalFight</string>
-    <string name="title_activity_new_game">new_game</string>
-    <!-- Strings used for fragments for navigation -->
-
+    <string name="new_game">New game</string>
+    <string name="title">NAVAL FIGHT</string>
+    <string name="easeAI">Ease</string>
+    <string name="normalAI">Normal</string>
+    <string name="cheatingAI">Cheating</string>
+    <string name="difficulty_label">Difficulty</string>
+    <string name="start_label">Begin!</string>
+    <string name="hardAI">Hard</string>
 </resources>

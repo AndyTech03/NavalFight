@@ -18,7 +18,6 @@
         <activity
             android:name=".NewGameActivity"
             android:exported="false"
-            android:label="@string/title_activity_new_game"
             android:theme="@style/Theme.NavalFight" />
         <activity
             android:name=".MainMenuActivity"

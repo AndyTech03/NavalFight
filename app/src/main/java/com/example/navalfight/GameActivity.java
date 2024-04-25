@@ -13,11 +13,10 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         Bundle extras = getIntent().getExtras();
         if(extras != null){
-            String difficulty_title = extras.getString(NewGameActivity.DIFFICULTY_KEY);
-            assert difficulty_title != null;
-            AIDifficulty difficulty = AIDifficulty.fromTitle(difficulty_title);
+            int difficulty_id = extras.getInt(NewGameActivity.DIFFICULTY_KEY);
+            AIDifficulty difficulty = AIDifficulty.fromID(difficulty_id);
             TextView ageView = findViewById(R.id.difficulty_text);
-            ageView.setText(difficulty.toString());
+            ageView.setText(getString(difficulty.getID()));
         }
 
     }
