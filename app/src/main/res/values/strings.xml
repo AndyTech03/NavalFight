@@ -13,4 +13,6 @@
     <string name="frigate_label">Frigate</string>
     <string name="cruiser_label">Cruiser</string>
     <string name="battleship_label">Battleship</string>
+    <string name="select_placeholder">Select</string>
+    <string name="place_ship">Place</string>
 </resources>
