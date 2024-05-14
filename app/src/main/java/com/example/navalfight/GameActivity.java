@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
 public class GameActivity extends AppCompatActivity {
 
     private GameMapFragment gameMapFragment;
+    List<Ship> ships;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,18 +38,24 @@ public class GameActivity extends AppCompatActivity {
             TextView ageView = findViewById(R.id.difficulty_text);
             ageView.setText(getString(difficulty.getID()));
 
-            List<Ship> ships =  extras.getParcelableArrayList(NewGameActivity.SHIPS_KEY);
-            Log.i("NAVAL_LOG_I", ships.toString());
-
-            List<Point> otherShipsDecks = new ArrayList<>();
-
-            for (Ship ship : ships) {
-                List<Point> decks = Arrays.asList(ship.getDecksLocations());
-                otherShipsDecks.addAll(decks);
-            }
-            gameMapFragment.clear();
-            gameMapFragment.drawShips(otherShipsDecks);
+            ships =  extras.getParcelableArrayList(NewGameActivity.SHIPS_KEY);
         }
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        assert ships != null;
+        Log.i("NAVAL_LOG_I", ships.toString());
+
+        List<Point> otherShipsDecks = new ArrayList<>();
+
+        for (Ship ship : ships) {
+            List<Point> decks = Arrays.asList(ship.getDecksLocations());
+            otherShipsDecks.addAll(decks);
+        }
+        gameMapFragment.clear();
+        gameMapFragment.drawShips(otherShipsDecks);
     }
 }
