@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentContainerView;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,7 +16,12 @@ import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 public class NewGameActivity extends AppCompatActivity {
 
@@ -33,6 +39,13 @@ public class NewGameActivity extends AppCompatActivity {
             ShipType.Frigate,
             ShipType.Cruiser,
             ShipType.Battleship
+    };
+
+    private final static Integer[] SHIP_COUNTS = {
+            4,
+            3,
+            2,
+            1
     };
     private @StringRes int difficultyID;
 
@@ -115,22 +128,23 @@ public class NewGameActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(itemSelectedListener);
     }
 
-    private void initShipsSpinner() {
-        final int count = SHIP_TYPES.length;
-        final String[] shipsTitleArray = new String[count];
-        for (int i = 0; i < count; i++) {
-            shipsTitleArray[i] = getString(SHIP_TYPES[i].getID());
+    private List<String> getShipsSpinnerTitles(){
+
+        List<String> shipsTitleArray = new ArrayList<>();
+        for (int i = 0; i < SHIP_COUNTS.length; i++) {
+            int shipsCount = SHIP_COUNTS[i];
+            if (shipsCount < 1)
+                shipsCount = 0;
+            shipsTitleArray.add(getString(SHIP_TYPES[i].getID()) + " : " + shipsCount);
         }
+        return shipsTitleArray;
+    }
+
+    private void initShipsSpinner() {
 
         Spinner spinner = findViewById(R.id.ship_sellector);
-        Button place_ship = findViewById(R.id.place_ship_button);
-        place_ship.setOnClickListener(l -> {
-            placedShips.add(placeableShip.clone());
-            spinner.setSelection(spinner.getSelectedItemPosition());
-            drawShips();
-        });
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, shipsTitleArray);
+                android.R.layout.simple_spinner_item, getShipsSpinnerTitles());
         adapter.setDropDownViewResource
                 (android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
@@ -155,6 +169,31 @@ public class NewGameActivity extends AppCompatActivity {
                     }
                 };
         spinner.setOnItemSelectedListener(itemSelectedListener);
+
+
+        Button place_ship = findViewById(R.id.place_ship_button);
+        place_ship.setOnClickListener(l -> {
+            int i = spinner.getSelectedItemPosition();
+            if (SHIP_COUNTS[i] < 1){
+                return;
+            }
+
+
+            Point[] placeableShipDecks = placeableShip.getDecksLocations();
+            Set<Point> marginPoints = getAllMarginPoints();
+            for (Point deck : placeableShipDecks) {
+                if (marginPoints.contains(deck))
+                    return;
+            }
+
+            placedShips.add(placeableShip.clone());
+            SHIP_COUNTS[i]--;
+            adapter.clear();
+            adapter.addAll(getShipsSpinnerTitles());
+            adapter.notifyDataSetChanged();
+            spinner.setSelection(i);
+            drawShips();
+        });
     }
 
     private void initMap() {
@@ -173,12 +212,15 @@ public class NewGameActivity extends AppCompatActivity {
         List<Point> otherShipsDecks = new ArrayList<>();
         List<Point> allowedDecks = new ArrayList<>();
         List<Point> notAllowedDecks = new ArrayList<>();
+        Set<Point> marginPoints = getAllMarginPoints();
 
-        for (Ship ship : placedShips){
-            otherShipsDecks.addAll(Arrays.asList(ship.getDecksLocations()));
+        for (Ship ship : placedShips) {
+            List<Point> decks = Arrays.asList(ship.getDecksLocations());
+            otherShipsDecks.addAll(decks);
         }
+
         for (Point deck : placeableShipDecks){
-            if (otherShipsDecks.contains(deck))
+            if (marginPoints.contains(deck))
                 notAllowedDecks.add(deck);
             else
                 allowedDecks.add(deck);
@@ -186,5 +228,38 @@ public class NewGameActivity extends AppCompatActivity {
         gameMapFragment.clear();
         gameMapFragment.drawShips(otherShipsDecks);
         gameMapFragment.drawPlaceableShip(allowedDecks, notAllowedDecks);
+    }
+
+    private Set<Point> getAllMarginPoints(){
+        Set<Point> marginPoints = new HashSet<>();
+
+        for (Ship ship : placedShips){
+            List<Point> decks = Arrays.asList(ship.getDecksLocations());
+            Optional<Point> optionalPoint;
+            int min_x = 0, max_x = 0;
+            optionalPoint = decks.stream().min(Comparator.comparingInt(p -> p.x));
+            if (optionalPoint.isPresent())
+                min_x = optionalPoint.get().x;
+            optionalPoint = decks.stream().max(Comparator.comparingInt(p -> p.x));
+            if (optionalPoint.isPresent())
+                max_x = optionalPoint.get().x;
+
+            int min_y = 0, max_y = 0;
+            optionalPoint = decks.stream().min(Comparator.comparingInt(p -> p.y));
+            if (optionalPoint.isPresent())
+                min_y = optionalPoint.get().y;
+            optionalPoint = decks.stream().max(Comparator.comparingInt(p -> p.y));
+            if (optionalPoint.isPresent())
+                max_y = optionalPoint.get().y;
+
+            Log.i("NAVAL_LOG_I", new Point(min_x, min_y) + " " + new Point(max_x, max_y));
+
+            for (int x = min_x - 1; x <= max_x + 1; x++){
+                for (int y = min_y - 1; y <= max_y + 1; y++)
+                    marginPoints.add(new Point(x, y));
+            }
+        }
+        Log.i("NAVAL_LOG_I", marginPoints.toString());
+        return marginPoints;
     }
 }
