@@ -53,6 +53,9 @@ public class NewGameActivity extends AppCompatActivity {
     private Ship placeableShip;
     private final List<Ship> placedShips = new ArrayList<>();
 
+    private Spinner shipTypeSpinner;
+    private ArrayAdapter<String> shipTypeSpinnerAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,8 @@ public class NewGameActivity extends AppCompatActivity {
 
         Button new_game = findViewById(R.id.start_b);
         new_game.setOnClickListener(l -> {
+            if (Arrays.stream(SHIP_COUNTS).anyMatch(c -> c > 0))
+                return;
             Intent intent = new Intent(NewGameActivity.this, GameActivity.class);
             intent.putExtra(DIFFICULTY_KEY, difficultyID);
             startActivity(intent);
@@ -129,7 +134,6 @@ public class NewGameActivity extends AppCompatActivity {
     }
 
     private List<String> getShipsSpinnerTitles(){
-
         List<String> shipsTitleArray = new ArrayList<>();
         for (int i = 0; i < SHIP_COUNTS.length; i++) {
             int shipsCount = SHIP_COUNTS[i];
@@ -169,7 +173,8 @@ public class NewGameActivity extends AppCompatActivity {
                     }
                 };
         spinner.setOnItemSelectedListener(itemSelectedListener);
-
+        shipTypeSpinner = spinner;
+        shipTypeSpinnerAdapter = adapter;
 
         Button place_ship = findViewById(R.id.place_ship_button);
         place_ship.setOnClickListener(l -> {
@@ -188,12 +193,19 @@ public class NewGameActivity extends AppCompatActivity {
 
             placedShips.add(placeableShip.clone());
             SHIP_COUNTS[i]--;
-            adapter.clear();
-            adapter.addAll(getShipsSpinnerTitles());
-            adapter.notifyDataSetChanged();
-            spinner.setSelection(i);
+            if (SHIP_COUNTS[i] < 1)
+                placeableShip = null;
+            updateShipsSpinner();
             drawShips();
         });
+    }
+
+    private void updateShipsSpinner(){
+        int i = shipTypeSpinner.getSelectedItemPosition();
+        shipTypeSpinnerAdapter.clear();
+        shipTypeSpinnerAdapter.addAll(getShipsSpinnerTitles());
+        shipTypeSpinnerAdapter.notifyDataSetChanged();
+        shipTypeSpinner.setSelection(i);
     }
 
     private void initMap() {
@@ -204,26 +216,46 @@ public class NewGameActivity extends AppCompatActivity {
                 placeableShip.setLocation(point);
                 drawShips();
             }
+            else {
+                Ship selectedShip = null;
+                for (Ship ship : placedShips){
+                    if (Arrays.asList(ship.getDecksLocations()).contains(point)){
+                        selectedShip = ship;
+                        break;
+                    }
+                }
+                if (selectedShip != null){
+                    int index = selectedShip.getTypeIndex();
+                    placedShips.remove(selectedShip);
+                    SHIP_COUNTS[index]++;
+                    shipTypeSpinner.setSelection(index);
+                    placeableShip = selectedShip;
+                    updateShipsSpinner();
+                    drawShips();
+                }
+            }
         });
     }
 
     private void drawShips() {
-        Point[] placeableShipDecks = placeableShip.getDecksLocations();
         List<Point> otherShipsDecks = new ArrayList<>();
         List<Point> allowedDecks = new ArrayList<>();
         List<Point> notAllowedDecks = new ArrayList<>();
-        Set<Point> marginPoints = getAllMarginPoints();
 
         for (Ship ship : placedShips) {
             List<Point> decks = Arrays.asList(ship.getDecksLocations());
             otherShipsDecks.addAll(decks);
         }
+        if (placeableShip != null){
+            Point[] placeableShipDecks = placeableShip.getDecksLocations();
+            Set<Point> marginPoints = getAllMarginPoints();
 
-        for (Point deck : placeableShipDecks){
-            if (marginPoints.contains(deck))
-                notAllowedDecks.add(deck);
-            else
-                allowedDecks.add(deck);
+            for (Point deck : placeableShipDecks){
+                if (marginPoints.contains(deck))
+                    notAllowedDecks.add(deck);
+                else
+                    allowedDecks.add(deck);
+            }
         }
         gameMapFragment.clear();
         gameMapFragment.drawShips(otherShipsDecks);
@@ -252,14 +284,11 @@ public class NewGameActivity extends AppCompatActivity {
             if (optionalPoint.isPresent())
                 max_y = optionalPoint.get().y;
 
-            Log.i("NAVAL_LOG_I", new Point(min_x, min_y) + " " + new Point(max_x, max_y));
-
             for (int x = min_x - 1; x <= max_x + 1; x++){
                 for (int y = min_y - 1; y <= max_y + 1; y++)
                     marginPoints.add(new Point(x, y));
             }
         }
-        Log.i("NAVAL_LOG_I", marginPoints.toString());
         return marginPoints;
     }
 }

@@ -15,6 +15,10 @@ public class Ship implements Cloneable{
         direction = Direction.South;
     }
 
+    public int getTypeIndex(){
+        return type.getLength() - 1;
+    }
+
     public void rotateForward() {
         if (locationIsValid(location, direction.next()))
             direction = direction.next();
