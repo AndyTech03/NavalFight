@@ -16,8 +16,26 @@ public enum ShipType {
         this.length = length;
     }
 
+    public static ShipType fromInt(int i) {
+        switch (i){
+            case 0:
+                return Boat;
+            case 1:
+                return Frigate;
+            case 2:
+                return Cruiser;
+            case 3:
+                return Battleship;
+        }
+        throw new IllegalStateException("Неверный номер: " + i);
+    }
+
     public int getLength() { return length; }
     public int getID() {
         return id;
+    }
+
+    public int toInt() {
+        return length - 1;
     }
 }

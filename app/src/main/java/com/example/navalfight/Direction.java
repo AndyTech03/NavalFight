@@ -6,6 +6,20 @@ public enum Direction {
     South,
     West;
 
+    public static Direction fromInt(int i) {
+        switch (i){
+            case 0:
+                return North;
+            case 1:
+                return East;
+            case 2:
+                return South;
+            case 3:
+                return West;
+        }
+        throw new IllegalStateException("Неверный номер: " + i);
+    }
+
     public Direction next(){
         switch (this){
             case North:
@@ -34,5 +48,19 @@ public enum Direction {
         }
 
         throw new IllegalStateException("Неожиданный enum:" + this);
+    }
+
+    public int toInt() {
+        switch (this){
+            case North:
+                return 0;
+            case East:
+                return 1;
+            case South:
+                return 2;
+            case West:
+                return 3;
+        }
+        throw new IllegalStateException("Неверный енам: " + this);
     }
 }

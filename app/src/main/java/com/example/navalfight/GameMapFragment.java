@@ -5,12 +5,14 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -42,11 +44,16 @@ public class GameMapFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public
+    View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_game_map, container, false);
+    }
 
-        View view = inflater.inflate(R.layout.fragment_game_map, container, false);
-
+    @Override
+    public void onViewCreated (View view,  Bundle savedInstanceState)
+    {
+        Log.i("NAVAL_LOG_I", view.toString());
         ViewGroup rows = (ViewGroup) view;
         for (int y = 0; y < MAP_SIZE.getHeight(); y++) {
             ViewGroup row = (ViewGroup) rows.getChildAt(y);
@@ -56,11 +63,11 @@ public class GameMapFragment extends Fragment {
                 cells[x][y].setOnClickListener(l -> cellClickedListener.onEvent(pos));
             }
         }
-
-        return view;
+        Log.i("NAVAL_LOG_I", Arrays.deepToString(cells));
     }
 
     public void clear() {
+        Log.i("NAVAL_LOG_I", Arrays.deepToString(cells));
         for (int y = 0; y < MAP_SIZE.getHeight(); y++) {
             for (int x = 0; x < MAP_SIZE.getWidth(); x++) {
                 cells[x][y].setImageResource(R.color.white);

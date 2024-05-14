@@ -16,4 +16,5 @@
     <string name="battleship_label">Линкор</string>
     <string name="select_placeholder">Выберите</string>
     <string name="place_ship">Разместить</string>
+    <string name="random_place">Случайно</string>
 </resources>

@@ -1,10 +1,12 @@
 package com.example.navalfight;
 
 import android.graphics.Point;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-public class Ship implements Cloneable{
+public class Ship implements Cloneable, Parcelable {
     private final ShipType type;
     private Point location;
     private Direction direction;
@@ -16,7 +18,7 @@ public class Ship implements Cloneable{
     }
 
     public int getTypeIndex(){
-        return type.getLength() - 1;
+        return type.toInt();
     }
 
     public void rotateForward() {
@@ -146,5 +148,39 @@ public class Ship implements Cloneable{
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    public static final Parcelable.Creator<Ship> CREATOR = new Parcelable.Creator<Ship>() {
+        public Ship createFromParcel(Parcel in) {
+            return new Ship(in);
+        }
+        public Ship[] newArray(int size) {
+            return new Ship[size];
+        }
+    };
+
+    private Ship(Parcel in) {
+        type = ShipType.fromInt(in.readInt());
+        location = new Point(in.readInt(), in.readInt());
+        direction = Direction.fromInt(in.readInt());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel out, int flags) {
+        out.writeInt(type.toInt());
+        out.writeInt(location.x);
+        out.writeInt(location.y);
+        out.writeInt(direction.toInt());
+    }
+
+    @NonNull
+    @Override
+    public String toString(){
+        return type + " " + location + " " + direction;
     }
 }

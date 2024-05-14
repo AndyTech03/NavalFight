@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentContainerView;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,6 +27,7 @@ import java.util.Set;
 public class NewGameActivity extends AppCompatActivity {
 
     public final static String DIFFICULTY_KEY = "DIFFICULTY";
+    public final static String SHIPS_KEY = "SHIPS";
 
     private final static AIDifficulty[] DIFFICULTY_ARRAY = {
             AIDifficulty.Ease,
@@ -49,7 +51,7 @@ public class NewGameActivity extends AppCompatActivity {
     };
     private @StringRes int difficultyID;
 
-    GameMapFragment gameMapFragment;
+    private GameMapFragment gameMapFragment;
     private Ship placeableShip;
     private final List<Ship> placedShips = new ArrayList<>();
 
@@ -68,10 +70,14 @@ public class NewGameActivity extends AppCompatActivity {
 
         Button new_game = findViewById(R.id.start_b);
         new_game.setOnClickListener(l -> {
+            /*
             if (Arrays.stream(SHIP_COUNTS).anyMatch(c -> c > 0))
                 return;
+             */
             Intent intent = new Intent(NewGameActivity.this, GameActivity.class);
             intent.putExtra(DIFFICULTY_KEY, difficultyID);
+            Log.i("NAVAL_LOG_I", Arrays.toString(placedShips.toArray()));
+            intent.putParcelableArrayListExtra(SHIPS_KEY, (ArrayList<? extends Parcelable>) placedShips);
             startActivity(intent);
         });
 
@@ -215,16 +221,15 @@ public class NewGameActivity extends AppCompatActivity {
             if (placeableShip != null) {
                 placeableShip.setLocation(point);
                 drawShips();
-            }
-            else {
+            } else {
                 Ship selectedShip = null;
-                for (Ship ship : placedShips){
-                    if (Arrays.asList(ship.getDecksLocations()).contains(point)){
+                for (Ship ship : placedShips) {
+                    if (Arrays.asList(ship.getDecksLocations()).contains(point)) {
                         selectedShip = ship;
                         break;
                     }
                 }
-                if (selectedShip != null){
+                if (selectedShip != null) {
                     int index = selectedShip.getTypeIndex();
                     placedShips.remove(selectedShip);
                     SHIP_COUNTS[index]++;
