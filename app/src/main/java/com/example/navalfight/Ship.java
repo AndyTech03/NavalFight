@@ -25,6 +25,10 @@ public class Ship implements Cloneable, Parcelable {
         return type.toInt();
     }
 
+    public int getLength () {
+        return type.getLength();
+    }
+
     public void rotateForward() {
         if (locationIsValid(location, direction.next()))
             direction = direction.next();
@@ -36,9 +40,14 @@ public class Ship implements Cloneable, Parcelable {
     }
 
     public void setLocation(Point location) {
-
         if (locationIsValid(location, direction))
             this.location = location;
+    }
+    public void setAll(Point location, Direction direction) {
+        if (locationIsValid(location, direction)){
+            this.location = location;
+            this.direction = direction;
+        }
     }
 
     public boolean locationIsValid(Point location, Direction direction){

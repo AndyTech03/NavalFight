@@ -106,7 +106,7 @@ public class GameActivity extends AppCompatActivity {
         }
 
         computerGameMapFragment.clear();
-        computerGameMapFragment.drawShips(computerShipsDecks);
+        //computerGameMapFragment.drawShips(computerShipsDecks);
         computerGameMapFragment.drawShoots(playerShoots);
         computerGameMapFragment.drawDestroyed(playerDestroyedShips);
     }

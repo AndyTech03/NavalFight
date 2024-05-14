@@ -58,11 +58,6 @@ public class GameManager {
             return;
 
         isComputerTurn = true;
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
-        }
-
         boolean shootAgain = onShoot(false, target);
         if (shootAgain) {
             isComputerTurn = false;
@@ -97,7 +92,6 @@ public class GameManager {
             for (Ship ship : ships) {
                 List<Point> decks = ship.getDecksLocations();
                 if (decks.contains(target)) {
-                    Log.i("NAVAL_LOG_I", shoots + " " + ship);
                     if (decks.stream().allMatch(d -> d.equals(target) ||
                             shoots.stream().anyMatch(s -> d.equals(s.getTarget()))))
                     {
@@ -111,6 +105,7 @@ public class GameManager {
                         if (computerShoot)
                             ai.onDestroy(marginShoots, ship);
                         destroyListener.onEvent(marginShoots, ship);
+                        onDestroy();
 
                         Log.i("NAVAL_LOG_I", (computerShoot ? "Компьютер потопил: " : "Игрок потопил: ") + ship);
                         return true;
@@ -127,5 +122,8 @@ public class GameManager {
             ai.onShoot(shoot);
         shootListener.onEvent(shoot);
         return result != Shoot.Result.Miss;
+    }
+
+    public void onDestroy(){
     }
 }

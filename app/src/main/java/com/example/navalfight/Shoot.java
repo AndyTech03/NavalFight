@@ -2,6 +2,10 @@ package com.example.navalfight;
 
 import android.graphics.Point;
 
+import androidx.annotation.NonNull;
+
+import kotlin.jvm.internal.FloatCompanionObject;
+
 public class Shoot {
     public enum Result {
         Miss,
@@ -22,5 +26,11 @@ public class Shoot {
 
     public Result getResult() {
         return result;
+    }
+
+    @NonNull
+    @Override
+    public String toString(){
+        return target + " " + result;
     }
 }
