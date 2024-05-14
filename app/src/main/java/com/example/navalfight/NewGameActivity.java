@@ -70,23 +70,20 @@ public class NewGameActivity extends AppCompatActivity {
 
         Button new_game = findViewById(R.id.start_b);
         new_game.setOnClickListener(l -> {
-            /*
             if (Arrays.stream(SHIP_COUNTS).anyMatch(c -> c > 0))
                 return;
-             */
             Intent intent = new Intent(NewGameActivity.this, GameActivity.class);
             intent.putExtra(DIFFICULTY_KEY, difficultyID);
-            Log.i("NAVAL_LOG_I", Arrays.toString(placedShips.toArray()));
             intent.putParcelableArrayListExtra(SHIPS_KEY, (ArrayList<? extends Parcelable>) placedShips);
             startActivity(intent);
         });
 
-        findViewById(R.id.roll_right_b).setOnClickListener(l ->{
+        findViewById(R.id.roll_right_b).setOnClickListener(l -> {
             placeableShip.rotateForward();
             drawShips();
         });
 
-        findViewById(R.id.roll_left_b).setOnClickListener(l ->{
+        findViewById(R.id.roll_left_b).setOnClickListener(l -> {
             placeableShip.rotateBackward();
             drawShips();
         });
@@ -139,7 +136,7 @@ public class NewGameActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(itemSelectedListener);
     }
 
-    private List<String> getShipsSpinnerTitles(){
+    private List<String> getShipsSpinnerTitles() {
         List<String> shipsTitleArray = new ArrayList<>();
         for (int i = 0; i < SHIP_COUNTS.length; i++) {
             int shipsCount = SHIP_COUNTS[i];
@@ -164,7 +161,7 @@ public class NewGameActivity extends AppCompatActivity {
                     public void onItemSelected(AdapterView<?> parent, View view,
                                                int position, long id) {
                         Point old_location = null;
-                        if (placeableShip != null){
+                        if (placeableShip != null) {
                             old_location = placeableShip.getLocation();
                         }
                         placeableShip = null;
@@ -185,12 +182,12 @@ public class NewGameActivity extends AppCompatActivity {
         Button place_ship = findViewById(R.id.place_ship_button);
         place_ship.setOnClickListener(l -> {
             int i = spinner.getSelectedItemPosition();
-            if (SHIP_COUNTS[i] < 1){
+            if (SHIP_COUNTS[i] < 1) {
                 return;
             }
 
 
-            Point[] placeableShipDecks = placeableShip.getDecksLocations();
+            List<Point> placeableShipDecks = placeableShip.getDecksLocations();
             Set<Point> marginPoints = getAllMarginPoints();
             for (Point deck : placeableShipDecks) {
                 if (marginPoints.contains(deck))
@@ -206,7 +203,7 @@ public class NewGameActivity extends AppCompatActivity {
         });
     }
 
-    private void updateShipsSpinner(){
+    private void updateShipsSpinner() {
         int i = shipTypeSpinner.getSelectedItemPosition();
         shipTypeSpinnerAdapter.clear();
         shipTypeSpinnerAdapter.addAll(getShipsSpinnerTitles());
@@ -248,14 +245,14 @@ public class NewGameActivity extends AppCompatActivity {
         List<Point> notAllowedDecks = new ArrayList<>();
 
         for (Ship ship : placedShips) {
-            List<Point> decks = Arrays.asList(ship.getDecksLocations());
+            List<Point> decks = ship.getDecksLocations();
             otherShipsDecks.addAll(decks);
         }
-        if (placeableShip != null){
-            Point[] placeableShipDecks = placeableShip.getDecksLocations();
+        if (placeableShip != null) {
+            List<Point> placeableShipDecks = placeableShip.getDecksLocations();
             Set<Point> marginPoints = getAllMarginPoints();
 
-            for (Point deck : placeableShipDecks){
+            for (Point deck : placeableShipDecks) {
                 if (marginPoints.contains(deck))
                     notAllowedDecks.add(deck);
                 else
@@ -267,32 +264,45 @@ public class NewGameActivity extends AppCompatActivity {
         gameMapFragment.drawPlaceableShip(allowedDecks, notAllowedDecks);
     }
 
-    private Set<Point> getAllMarginPoints(){
+    public static Set<Point> addMarginPoints(Ship ship) {
+        Optional<Point> optionalPoint;
+        Set<Point> marginPoints = new HashSet<>();
+        List<Point> decks = ship.getDecksLocations();
+
+        int min_x = 0, max_x = 0;
+        optionalPoint = decks.stream().min(Comparator.comparingInt(p -> p.x));
+        if (optionalPoint.isPresent())
+            min_x = optionalPoint.get().x;
+        optionalPoint = decks.stream().max(Comparator.comparingInt(p -> p.x));
+        if (optionalPoint.isPresent())
+            max_x = optionalPoint.get().x;
+
+        int min_y = 0, max_y = 0;
+        optionalPoint = decks.stream().min(Comparator.comparingInt(p -> p.y));
+        if (optionalPoint.isPresent())
+            min_y = optionalPoint.get().y;
+        optionalPoint = decks.stream().max(Comparator.comparingInt(p -> p.y));
+        if (optionalPoint.isPresent())
+            max_y = optionalPoint.get().y;
+
+
+        for (int x = min_x - 1; x <= max_x + 1; x++) {
+            if (x < 0 || x >= GameMapFragment.MAP_SIZE.getWidth())
+                continue;
+            for (int y = min_y - 1; y <= max_y + 1; y++) {
+                if (y < 0 || y >= GameMapFragment.MAP_SIZE.getHeight())
+                    continue;
+                marginPoints.add(new Point(x, y));
+            }
+        }
+        return marginPoints;
+    }
+
+    private Set<Point> getAllMarginPoints() {
         Set<Point> marginPoints = new HashSet<>();
 
-        for (Ship ship : placedShips){
-            List<Point> decks = Arrays.asList(ship.getDecksLocations());
-            Optional<Point> optionalPoint;
-            int min_x = 0, max_x = 0;
-            optionalPoint = decks.stream().min(Comparator.comparingInt(p -> p.x));
-            if (optionalPoint.isPresent())
-                min_x = optionalPoint.get().x;
-            optionalPoint = decks.stream().max(Comparator.comparingInt(p -> p.x));
-            if (optionalPoint.isPresent())
-                max_x = optionalPoint.get().x;
-
-            int min_y = 0, max_y = 0;
-            optionalPoint = decks.stream().min(Comparator.comparingInt(p -> p.y));
-            if (optionalPoint.isPresent())
-                min_y = optionalPoint.get().y;
-            optionalPoint = decks.stream().max(Comparator.comparingInt(p -> p.y));
-            if (optionalPoint.isPresent())
-                max_y = optionalPoint.get().y;
-
-            for (int x = min_x - 1; x <= max_x + 1; x++){
-                for (int y = min_y - 1; y <= max_y + 1; y++)
-                    marginPoints.add(new Point(x, y));
-            }
+        for (Ship ship : placedShips) {
+            marginPoints.addAll(addMarginPoints(ship));
         }
         return marginPoints;
     }

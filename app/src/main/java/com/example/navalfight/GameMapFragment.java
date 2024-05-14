@@ -3,6 +3,7 @@ package com.example.navalfight;
 import android.graphics.Point;
 import android.os.Bundle;
 
+import androidx.annotation.ColorRes;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -44,16 +45,13 @@ public class GameMapFragment extends Fragment {
 
 
     @Override
-    public
-    View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_game_map, container, false);
     }
 
     @Override
-    public void onViewCreated (View view,  Bundle savedInstanceState)
-    {
-        Log.i("NAVAL_LOG_I", view.toString());
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         ViewGroup rows = (ViewGroup) view;
         for (int y = 0; y < MAP_SIZE.getHeight(); y++) {
             ViewGroup row = (ViewGroup) rows.getChildAt(y);
@@ -63,11 +61,9 @@ public class GameMapFragment extends Fragment {
                 cells[x][y].setOnClickListener(l -> cellClickedListener.onEvent(pos));
             }
         }
-        Log.i("NAVAL_LOG_I", Arrays.deepToString(cells));
     }
 
     public void clear() {
-        Log.i("NAVAL_LOG_I", Arrays.deepToString(cells));
         for (int y = 0; y < MAP_SIZE.getHeight(); y++) {
             for (int x = 0; x < MAP_SIZE.getWidth(); x++) {
                 cells[x][y].setImageResource(R.color.white);
@@ -79,6 +75,30 @@ public class GameMapFragment extends Fragment {
         for (Point p : decks) {
             cells[p.x][p.y].setImageResource(R.color.my_ship);
         }
+    }
+
+    public void drawShoots(List<Shoot> shoots) {
+        for (Shoot shoot : shoots) {
+            Point p = shoot.getTarget();
+            @ColorRes int id = R.color.white;
+            switch (shoot.getResult()) {
+                case Hit:
+                    id = R.color.hitted_ship;
+                    break;
+                case Miss:
+                    id = R.color.miss_shoot;
+                    break;
+                case Invalid:
+                    continue;
+            }
+            cells[p.x][p.y].setImageResource(id);
+        }
+    }
+
+    public void drawDestroyed(List<Ship> destroyedShips) {
+        for (Ship ship : destroyedShips)
+            for (Point p : ship.getDecksLocations())
+                cells[p.x][p.y].setImageResource(R.color.destroyed_ship);
     }
 
     public void drawPlaceableShip(List<Point> allowed_decks, List<Point> not_allowed_decks) {

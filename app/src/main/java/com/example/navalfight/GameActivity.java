@@ -1,14 +1,10 @@
 package com.example.navalfight;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 
 import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,45 +13,101 @@ import java.util.List;
 
 public class GameActivity extends AppCompatActivity {
 
-    private GameMapFragment gameMapFragment;
-    List<Ship> ships;
+    private GameManager game;
+    private GameMapFragment playerGameMapFragment, computerGameMapFragment;
+    private List<Shoot> playerShoots, computerShoots;
+    private List<Ship> playerDestroyedShips, computerDestroyedShips;
+
+    private List<Ship> playerShips, computerShips;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        playerShoots = new ArrayList<>();
+        computerShoots = new ArrayList<>();
+        playerDestroyedShips = new ArrayList<>();
+        computerDestroyedShips = new ArrayList<>();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        FragmentContainerView container = findViewById(R.id.map_container);
-        gameMapFragment = container.getFragment();
-        gameMapFragment.setOnCellClickedListener((point) -> {});
-
-        Log.i("NAVAL_LOG_I", gameMapFragment.toString());
-
         Bundle extras = getIntent().getExtras();
-        if (extras != null){
-            int difficulty_id = extras.getInt(NewGameActivity.DIFFICULTY_KEY);
-            AIDifficulty difficulty = AIDifficulty.fromID(difficulty_id);
-            TextView ageView = findViewById(R.id.difficulty_text);
-            ageView.setText(getString(difficulty.getID()));
+        if (extras == null)
+            throw new IllegalStateException("НЕ ПОЛУЧЕНЫ ДАННЫЕ!");
 
-            ships =  extras.getParcelableArrayList(NewGameActivity.SHIPS_KEY);
-        }
+        int difficulty_id = extras.getInt(NewGameActivity.DIFFICULTY_KEY);
+        AIDifficulty difficulty = AIDifficulty.fromID(difficulty_id);
+        TextView ageView = findViewById(R.id.difficulty_text);
+        ageView.setText(getString(difficulty.getID()));
+
+        playerShips = extras.getParcelableArrayList(NewGameActivity.SHIPS_KEY);
+        computerShips = new ArrayList<>(playerShips);
+
+        game = new GameManager(playerShips, computerShips, difficulty);
+        game.setOnComputerShootListener((shoot) -> {
+            computerShoots.add(shoot);
+            updatePlayerMap();
+        });
+        game.setOnComputerDestroyedListener((marginShoots, destroyed) -> {
+            computerShoots.addAll(marginShoots);
+            computerDestroyedShips.add(destroyed);
+            updatePlayerMap();
+        });
+
+        game.setOnPlayerShootListener((shoot) -> {
+            playerShoots.add(shoot);
+            updateComputerMap();
+        });
+        game.setOnPlayerDestroyedListener((marginShoots, destroyed) -> {
+            playerShoots.addAll(marginShoots);
+            playerDestroyedShips.add(destroyed);
+            updateComputerMap();
+        });
+
+        FragmentContainerView container = findViewById(R.id.player_map_container);
+        playerGameMapFragment = container.getFragment();
+        playerGameMapFragment.setOnCellClickedListener((point) -> {});
+
+        container = findViewById(R.id.computer_map_container);
+        computerGameMapFragment = container.getFragment();
+        computerGameMapFragment.setOnCellClickedListener((point) -> {
+            game.onPlayerTarget(point);
+        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        updatePlayerMap();
+        updateComputerMap();
+    }
 
-        assert ships != null;
-        Log.i("NAVAL_LOG_I", ships.toString());
+    private void updatePlayerMap(){
+        assert playerShips != null;
+        List<Point> playerShipsDecks = new ArrayList<>();
 
-        List<Point> otherShipsDecks = new ArrayList<>();
-
-        for (Ship ship : ships) {
-            List<Point> decks = Arrays.asList(ship.getDecksLocations());
-            otherShipsDecks.addAll(decks);
+        for (Ship ship : playerShips) {
+            List<Point> decks = ship.getDecksLocations();
+            playerShipsDecks.addAll(decks);
         }
-        gameMapFragment.clear();
-        gameMapFragment.drawShips(otherShipsDecks);
+
+        playerGameMapFragment.clear();
+        playerGameMapFragment.drawShips(playerShipsDecks);
+        playerGameMapFragment.drawShoots(computerShoots);
+        playerGameMapFragment.drawDestroyed(computerDestroyedShips);
+    }
+
+    private void updateComputerMap(){
+        assert computerShips != null;
+        List<Point> computerShipsDecks = new ArrayList<>();
+
+        for (Ship ship : computerShips) {
+            List<Point> decks = ship.getDecksLocations();
+            computerShipsDecks.addAll(decks);
+        }
+
+        computerGameMapFragment.clear();
+        computerGameMapFragment.drawShips(computerShipsDecks);
+        computerGameMapFragment.drawShoots(playerShoots);
+        computerGameMapFragment.drawDestroyed(playerDestroyedShips);
     }
 }

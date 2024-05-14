@@ -6,6 +6,10 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Ship implements Cloneable, Parcelable {
     private final ShipType type;
     private Point location;
@@ -115,7 +119,7 @@ public class Ship implements Cloneable, Parcelable {
         return new Point(location);
     }
 
-    public Point[] getDecksLocations(){
+    public List<Point> getDecksLocations(){
         int x = location.x;
         int y = location.y;
         Point[] result = new Point[type.getLength()];
@@ -137,7 +141,7 @@ public class Ship implements Cloneable, Parcelable {
                     break;
             }
         }
-        return result;
+        return new ArrayList<>(Arrays.asList(result));
     }
 
     @NonNull

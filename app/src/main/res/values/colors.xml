@@ -5,4 +5,7 @@
     <color name="my_ship">#2196F3</color>
     <color name="placeable_ship_allowed">#4CAF50</color>
     <color name="placeable_ship_not_allowed">#F44336</color>
+    <color name="destroyed_ship">#FF5722</color>
+    <color name="miss_shoot">#3F51B5</color>
+    <color name="hitted_ship">#FFEB3B</color>
 </resources>
